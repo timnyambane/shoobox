@@ -121,12 +121,17 @@ class _HomeScreenState extends State<HomeScreen> {
             Card(
               elevation: 4,
               margin: const EdgeInsets.all(8.0),
-              color: Colors.grey[300],
+              color: Colors.transparent,
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Colors.blue[200]!, Colors.blue[800]!],
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

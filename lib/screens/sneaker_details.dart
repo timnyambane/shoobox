@@ -3,21 +3,28 @@ import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:shoobox/utils/styles.dart';
 
 class SneakerDetails extends StatefulWidget {
-  const SneakerDetails({super.key});
+  const SneakerDetails({Key? key}) : super(key: key);
 
   @override
-  State<SneakerDetails> createState() => _SneakerDetailsState();
+  _SneakerDetailsState createState() => _SneakerDetailsState();
 }
 
 class _SneakerDetailsState extends State<SneakerDetails> {
   int selectedImageIndex = 0;
   int? selectedSize;
   int selectedIndex = -1;
+  PageController pageController = PageController(initialPage: 0);
 
   void selectImage(int index) {
     setState(() {
       selectedImageIndex = index;
     });
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -31,12 +38,13 @@ class _SneakerDetailsState extends State<SneakerDetails> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-          title: const Text(
-            "Sneaker Details",
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0),
+        title: const Text(
+          "Sneaker Details",
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Column(
         children: [
           ClipRRect(
@@ -47,9 +55,18 @@ class _SneakerDetailsState extends State<SneakerDetails> {
             child: SizedBox(
               width: double.infinity,
               height: MediaQuery.of(context).size.height * 0.45,
-              child: Image.asset(
-                imagePaths[selectedImageIndex],
-                fit: BoxFit.cover,
+              child: PageView.builder(
+                controller: pageController,
+                itemCount: imagePaths.length,
+                onPageChanged: (index) {
+                  selectImage(index);
+                },
+                itemBuilder: (context, index) {
+                  return Image.asset(
+                    imagePaths[index],
+                    fit: BoxFit.cover,
+                  );
+                },
               ),
             ),
           ),
@@ -59,7 +76,14 @@ class _SneakerDetailsState extends State<SneakerDetails> {
               bool isSelected = index == selectedImageIndex;
 
               return GestureDetector(
-                onTap: () => selectImage(index),
+                onTap: () {
+                  selectImage(index);
+                  pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: Container(
@@ -97,9 +121,10 @@ class _SneakerDetailsState extends State<SneakerDetails> {
                       style: Styles.bodyTextS,
                     ),
                     IconButton(
-                        onPressed: () {},
-                        icon: const Icon(HeroiconsOutline.heart),
-                        color: Styles.redColor)
+                      onPressed: () {},
+                      icon: const Icon(HeroiconsOutline.heart),
+                      color: Styles.redColor,
+                    ),
                   ],
                 ),
                 const Padding(
@@ -118,8 +143,9 @@ class _SneakerDetailsState extends State<SneakerDetails> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Colors.grey[300]),
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.grey[300],
+                  ),
                   child: const Padding(
                     padding: EdgeInsets.all(6.0),
                     child: Text(
@@ -131,8 +157,9 @@ class _SneakerDetailsState extends State<SneakerDetails> {
                 const SizedBox(width: 10),
                 Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Colors.grey[300]),
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.grey[300],
+                  ),
                   child: const Padding(
                     padding: EdgeInsets.all(6.0),
                     child: Text(
@@ -144,8 +171,9 @@ class _SneakerDetailsState extends State<SneakerDetails> {
                 const SizedBox(width: 10),
                 Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Colors.grey[300]),
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.grey[300],
+                  ),
                   child: const Padding(
                     padding: EdgeInsets.all(6.0),
                     child: Row(
@@ -159,11 +187,11 @@ class _SneakerDetailsState extends State<SneakerDetails> {
                         Text(
                           "  (69 Reviews)",
                           style: Styles.smallTextGray,
-                        )
+                        ),
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -180,7 +208,7 @@ class _SneakerDetailsState extends State<SneakerDetails> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
